@@ -168,3 +168,8 @@ InitTestScene*.unity*
 
 # ignore my rebuild file
 /rebuild.ps1
+
+# ignore build number file
+/buildnum.txt
+
+/Version.g.cs
