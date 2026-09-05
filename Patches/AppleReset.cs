@@ -1,0 +1,1 @@
+// i want to add a trap that resets your apples, but theres some issues with breeding where if apples = 0 it breeds when it shouldn't, i dont feel like fixing this rn

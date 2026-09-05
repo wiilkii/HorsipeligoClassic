@@ -16,7 +16,8 @@ namespace Horsipelago.Patches;
 public static class HorseDataPatch
 {
 
-    
+    // make this a full controller?, like be able to trigger this upon other events and maybe just build a universal horse data patcher idk copilot autocomplete SHUT UP PELASE IM TRYING TO TYPE
+
     static void Postfix(Movement __instance)
     {
     var currentHorseTraverse = Traverse.Create(__instance).Field("currentHorse");
