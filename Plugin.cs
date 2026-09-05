@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace Horsipelago;
 
-[BepInPlugin(PluginGUID, PluginName, PluginVersion)]
+[BepInPlugin(PluginGUID, PluginName, GeneratedVersion.PluginVersion)]
 public class Plugin : BaseUnityPlugin
 {
     public const string PluginGUID = "com.yourName.projectName";
     public const string PluginName = "Horsipelago";
-    public const string PluginVersion = "0.0.0";
+    // public const string PluginVersion = "0.0.0";
 
-    public const string ModDisplayInfo = $"{PluginName} v{PluginVersion}";
+    public const string ModDisplayInfo = $"{PluginName} v{GeneratedVersion.PluginVersion}";
     private const string APDisplayInfo = $"Archipelago v{ArchipelagoClient.APVersion} wow this needs to be updated";
     public static ManualLogSource BepinLogger;
     public static ArchipelagoClient ArchipelagoClient;
