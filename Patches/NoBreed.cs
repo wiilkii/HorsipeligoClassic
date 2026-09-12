@@ -12,10 +12,16 @@ namespace Horsipelago.Patches;
 [HarmonyPatch(typeof(GameManager), "LoadBreeding")]
 public static class NoBreedPatch
 {
+    public static bool IsBreedingAllowed = false;
+
     static bool Prefix()
     {
-        Plugin.BepinLogger.LogInfo("blocked breed");
-        return false; // disables the horse breeding menu from being opened, effectively disabling horse breeding
+        if (!IsBreedingAllowed)
+        {
+            Plugin.BepinLogger.LogInfo("blocked breed");
+            return false; // disables the horse breeding menu from being opened, effectively disabling horse breeding
+        }
+    return true;
     }
 }
 

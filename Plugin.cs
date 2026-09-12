@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using Horsipelago.Archipelago;
 using Horsipelago.Utils;
 using UnityEngine;
+// using Horsipelago.Debug;
 
 
 namespace Horsipelago;
@@ -28,6 +29,8 @@ public class Plugin : BaseUnityPlugin
 
         var harmony = new HarmonyLib.Harmony(PluginGUID);
         harmony.PatchAll();
+
+        gameObject.AddComponent<Utils.DebugMenu>();
 
         ArchipelagoConsole.LogMessage($"{ModDisplayInfo} loaded!");
     }

@@ -24,7 +24,7 @@ public static class HorseDataPatch
     HorseDataSaveEntry saveEntry = currentHorseTraverse.GetValue<HorseDataSaveEntry>();
 
     HorseData horseData = saveEntry.Value;       
-    horseData.horsePower = 100f; // omg call this a glue trap :sob:                  
+    // horseData.horsePower = horseData.horsePower; // omg call this a glue trap :sob:                  
     saveEntry.Value = horseData;                  
     // so we get a copy of the save data, do shit do it, and reset it back into the save data. cool!
 
