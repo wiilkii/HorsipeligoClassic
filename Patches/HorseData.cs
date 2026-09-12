@@ -24,11 +24,11 @@ public static class HorseDataPatch
     HorseDataSaveEntry saveEntry = currentHorseTraverse.GetValue<HorseDataSaveEntry>();
 
     HorseData horseData = saveEntry.Value;       
-    horseData.horsePower = 10f; // omg call this a glue trap :sob:                  
+    horseData.horsePower = 100f; // omg call this a glue trap :sob:                  
     saveEntry.Value = horseData;                  
     // so we get a copy of the save data, do shit do it, and reset it back into the save data. cool!
 
-    Plugin.BepinLogger.LogInfo(saveEntry.Value.horsePower);
+    // Plugin.BepinLogger.LogInfo(saveEntry.Value.horsePower);
     }
 }
 

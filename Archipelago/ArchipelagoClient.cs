@@ -14,7 +14,7 @@ namespace Horsipelago.Archipelago;
 public class ArchipelagoClient
 {
     public const string APVersion = "0.5.0";
-    private const string Game = "My Game";
+    private const string Game = "HorsipelagoClassic";
 
     public static bool Authenticated;
     private bool attemptingConnection;
