@@ -30,7 +30,9 @@ public class Plugin : BaseUnityPlugin
         var harmony = new HarmonyLib.Harmony(PluginGUID);
         harmony.PatchAll();
 
+    #if DEBUG
         gameObject.AddComponent<Utils.DebugMenu>();
+    #endif
 
         ArchipelagoConsole.LogMessage($"{ModDisplayInfo} loaded!");
     }
