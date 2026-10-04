@@ -14,14 +14,17 @@ namespace Horsipelago.Archipelago;
 public class ArchipelagoClient
 {
     public const string APVersion = "0.5.0";
-    private const string Game = "HorsipelagoClassic";
+    private const string Game = "Horse Riding Classic";
 
     public static bool Authenticated;
     private bool attemptingConnection;
+    private static readonly Random Random = new();
 
     public static ArchipelagoData ServerData = new();
     private DeathLinkHandler DeathLinkHandler;
     private ArchipelagoSession session;
+
+
 
     /// <summary>
     /// call to connect to an Archipelago session. Connection info should already be set up on ServerData
@@ -149,6 +152,39 @@ public class ArchipelagoClient
         // TODO reward the item here
         // if items can be received while in an invalid state for actually handling them, they can be placed in a local
         // queue/collection to be handled later
+
+        // breed item received
+
+        if (receivedItem.ItemId == 1)
+        {
+            // if (Random.Next(5) == 0)
+            // {
+            //     Actions.ActionsHandler.Instance.TriggerBreed();
+            // }
+        }
+
+        if (receivedItem.ItemId >= 2 && receivedItem.ItemId <= 5)
+        {
+
+
+
+
+            Actions.ActionsHandler.Instance.UnlockSpecificGate(receivedItem.ItemId);
+        }
+
+        if (receivedItem.ItemId == 6)
+        {
+            Plugin.BepinLogger.LogDebug("yay : )");
+            session.SetGoalAchieved();
+        }
+    }
+
+    public void sendLocationCheck(int locationID)
+    {
+        if (!Authenticated) return;
+
+        session.Locations.CompleteLocationChecksAsync(locationID);
+        ServerData.CheckedLocations.Add(locationID);
     }
 
     /// <summary>

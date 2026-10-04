@@ -17,6 +17,14 @@ public class ActionsHandler
     private static ActionsHandler _instance;
     public static ActionsHandler Instance => _instance ??= new ActionsHandler();
     
+    private Dictionary<long, bool> keys = new()
+    {
+        { 2, false },
+        { 3, false },
+        { 4, false },
+        { 5, false }
+    };
+
     public void TriggerBreed()
     {
         var gameManager = GameManager.Instance;
@@ -97,5 +105,44 @@ public class ActionsHandler
             _nextGateIndex++;
         }
         return success;
+    }
+
+    public void UnlockSpecificGate(long id)
+    {
+        switch (id)
+        {
+            case 2:
+                UnlockGate("Farm Gate");
+                keys[2] = true;
+                if (keys[4])
+                {
+                    UnlockGate("Modern Gate from Farm");
+                }
+                break;
+            case 3:
+                UnlockGate("Western Gate");
+                keys[3] = true;
+                if (keys[4])
+                {
+                    UnlockGate("Modern Gate from Western");
+                }
+                break; 
+            case 4:
+                if (keys[2])
+                {
+                    UnlockGate("Modern Gate from Farm");
+                }
+                if (keys[3])
+                {
+                    UnlockGate("Modern Gate from Western");
+                }
+                keys[4] = true;
+                break;
+            case 5:
+                UnlockGate("Glue Factory Gate");
+                keys[5] = true;
+                break;
+            
+        }
     }
 }
