@@ -9,6 +9,10 @@ using HarmonyLib;
 using Horsipelago.Patches;
 using HorseRidingClassic.Source.HorseBreeding;
 using HorseRidingClassic.Source.Player;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.IO;
+using System;
 
 namespace Horsipelago.Actions;
 
@@ -25,24 +29,46 @@ public class ActionsHandler
         { 5, false }
     };
 
-    public void TriggerBreed()
+    public bool TriggerBreed()
     {
         var gameManager = GameManager.Instance;
         if (gameManager == null)
         {
             Plugin.BepinLogger.LogWarning("GameManager.Instance not set yet");
-            return;
+            return false;
         }
+
+        string dir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            "AppData", "LocalLow", "Juice Cube", "Horse Riding Classic");
+
+        string filePath = Path.Combine(dir, "Archipelago.ride");
+
+        JObject savedata = JObject.Parse(File.ReadAllText(filePath));
+
+        int owed = (int?)savedata["archipelagoBreedsOwed"] ?? 0;
+        int used = (int?)savedata["archipelagoBreedsUsed"] ?? 0;
+
+        savedata["archipelagoBreedsOwed"] = Math.Max(owed - 1, 0);
+        savedata["archipelagoBreedsUsed"] = used + 1;
+        File.WriteAllText(filePath, savedata.ToString(Formatting.Indented));
+
         NoBreedPatch.IsBreedingAllowed = true;
         var newHorseOwedField = Traverse.Create(gameManager).Field("newHorseOwed").GetValue<BoolSaveEntry>();
         newHorseOwedField.Value = true;
-        gameManager.LoadBreeding(); // public method, no need for Traverse here
+        if (owed <= 1)
+        {
+            gameManager.LoadBreeding();
+        }
+        
         NoBreedPatch.IsBreedingAllowed = false; // reset the flag after triggering the breed
+
+        return true;
     }
 
     public void SetHorseSpeed(float speed)
     {
-        var movement = Object.FindFirstObjectByType<Movement>();
+        var movement = UnityEngine.Object.FindFirstObjectByType<Movement>();
         if (movement == null)
         {
             Plugin.BepinLogger.LogWarning("Movement instance not found");
@@ -58,7 +84,7 @@ public class ActionsHandler
 
     public bool UnlockGate(string gateName)
     {
-        var gates = Object.FindObjectsByType<AppleGate>(FindObjectsSortMode.None);
+        var gates = UnityEngine.Object.FindObjectsByType<AppleGate>(FindObjectsSortMode.None);
         var gate = gates.FirstOrDefault(g => g.gameObject.name == gateName);
 
         if (gate == null)

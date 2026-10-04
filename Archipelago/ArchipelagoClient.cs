@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.Design.Serialization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Archipelago.MultiClient.Net;
@@ -8,6 +10,9 @@ using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
 using Archipelago.MultiClient.Net.Packets;
 using Horsipelago.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace Horsipelago.Archipelago;
 
@@ -24,6 +29,7 @@ public class ArchipelagoClient
     private DeathLinkHandler DeathLinkHandler;
     private ArchipelagoSession session;
 
+    private int skipBreedsCount;
 
 
     /// <summary>
@@ -103,6 +109,16 @@ public class ArchipelagoClient
             session.Locations.CompleteLocationChecksAsync(ServerData.CheckedLocations.ToArray());
             outText = $"Successfully connected to {ServerData.Uri} as {ServerData.SlotName}!";
 
+            string dir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                "AppData", "LocalLow", "Juice Cube", "Horse Riding Classic");
+
+            string filePath = Path.Combine(dir, "Archipelago.ride");
+
+            JObject savedata = JObject.Parse(File.ReadAllText(filePath));
+
+            this.skipBreedsCount = (int)savedata["archipelagoBreedsUsed"];
+
             ArchipelagoConsole.LogMessage(outText);
         }
         else
@@ -157,10 +173,39 @@ public class ArchipelagoClient
 
         if (receivedItem.ItemId == 1)
         {
-            // if (Random.Next(5) == 0)
+            // Actions.ActionsHandler.Instance.TriggerBreed();
+            string dir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                "AppData", "LocalLow", "Juice Cube", "Horse Riding Classic");
+
+            string filePath = Path.Combine(dir, "Archipelago.ride");
+
+            JObject savedata = JObject.Parse(File.ReadAllText(filePath));
+            
+            if (skipBreedsCount > 0)
+            {
+                skipBreedsCount--;
+                return;
+            }
+
+            if ((int)savedata["archipelagoBreedsOwed"] > 0)
+            {
+                savedata["archipelagoBreedsOwed"] = (int)savedata["archipelagoBreedsOwed"] + 1;
+                File.WriteAllText(filePath, savedata.ToString(Formatting.Indented));
+                return;
+            }
+
+            Actions.ActionsHandler.Instance.TriggerBreed();
+
+            // if (savedata.ContainsKey("archipelagoBreedsUsed") && savedata.ContainsKey("archipelagoBreedsOwed"))
             // {
-            //     Actions.ActionsHandler.Instance.TriggerBreed();
+            //     savedata["archipelagoBreedsOwed"] = (int)savedata["archipelagoBreedsOwed"] + 1;
+            //     savedata["archipelagoBreedsUsed"] = 0;
             // }
+
+            
+            
+
         }
 
         if (receivedItem.ItemId >= 2 && receivedItem.ItemId <= 5)
@@ -178,6 +223,7 @@ public class ArchipelagoClient
             session.SetGoalAchieved();
         }
     }
+
 
     public void sendLocationCheck(int locationID)
     {
